@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "spicedb.fullname" . }}
+  labels:
+    {{- include "spicedb.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "spicedb.fullname" . }}
+  replicas: {{ .Values.statefulset.replicas | int64 }}
+  selector:
+    matchLabels:
+      {{- include "spicedb.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "spicedb.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "spicedb.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+              {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - serve
+            - --grpc-enabled={{ .Values.grpc.enabled }}
+            - --http-enabled={{ .Values.http.enabled }}
+            - --dispatch-cluster-enabled={{ .Values.dispatch.enabled }}
+            - --metrics-enabled={{ .Values.metrics.enabled }}
+            - --dashboard-enabled={{ .Values.dashboard.enabled }}
+            - --datastore-engine={{ .Values.datastore.engine }}
+
+            {{- if ne .Values.datastore.engine "memory" }}
+            - --datastore-conn-uri={{ .Values.datastore.connection.uri }}
+            {{- end }}
+
+            {{- if .Values.grpc.enabled }}
+            - --grpc-preshared-key={{ required "'grpc.presharedKey' is required" .Values.grpc.presharedKey }}
+            {{- end }}
+
+            {{- if .Values.http.enabled }}
+            {{- end }}
+
+            {{- if .Values.dispatch.enabled }}
+            - --dispatch-upstream-addr=kubernetes://{{ include "spicedb.fullname" . }}.{{ .Release.Namespace }}:{{ .Values.dispatch.port }}
+            {{- end -}}
+
+            {{- if .Values.metrics.enabled }}
+            {{- end -}}
+
+            {{- if .Values.dashboard.enabled }}
+            {{- end }}
+          ports:
+            {{- if .Values.grpc.enabled }}
+            - containerPort: {{ .Values.grpc.port }}
+              protocol: TCP
+              name: grpc
+            {{- end }}
+            {{- if .Values.http.enabled }}
+            - containerPort: {{ .Values.http.port }}
+              protocol: TCP
+              name: http
+            {{- end }}
+            {{- if .Values.dashboard.enabled }}
+            - containerPort: {{ .Values.dashboard.port }}
+              protocol: TCP
+              name: dashboard
+            {{- end }}
+            {{- if .Values.dispatch.enabled }}
+            - containerPort: {{ .Values.dispatch.port }}
+              protocol: TCP
+              name: dispatch
+            {{- end }}
+            {{- if .Values.metrics.enabled }}
+            - containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+              name: metrics
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

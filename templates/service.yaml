@@ -1,0 +1,31 @@
+{{- if .Values.grpc.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "spicedb.fullname" . }}
+  labels:
+    {{- include "spicedb.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    {{- if .Values.grpc.enabled }}
+    - port: {{ .Values.grpc.port }}
+      targetPort: grpc
+      protocol: TCP
+      name: grpc
+    {{- end }}
+    {{- if .Values.http.enabled }}
+    - port: {{ .Values.http.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    {{- end }}
+    {{- if .Values.dispatch.enabled }}
+    - port: {{ .Values.dispatch.port }}
+      targetPort: dispatch
+      protocol: TCP
+      name: dispatch
+    {{- end }}
+  selector:
+    {{- include "spicedb.selectorLabels" . | nindent 4 }}
+{{- end }}

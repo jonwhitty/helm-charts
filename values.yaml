@@ -1,0 +1,90 @@
+dashboard:
+  enabled: true
+  port: 8080
+  tls:
+    enabled: false
+    cert:
+    key:
+
+datastore:
+  engine: memory
+  connection:
+    uri:
+    maxOpenConn: 20
+    minOpenConn: 10
+  gc:
+    interval: 3m0s
+    maxOperationTime: 1m0s
+    window: 24h0m0s
+
+dispatch:
+  enabled: true
+  port: 50053
+
+grpc:
+  enabled: true
+  port: 50051
+  tls:
+    enabled: false
+    cert:
+    key:
+  presharedKey:
+  maxConnAge: 30s
+  network: tcp
+  shutdownGracePeriod: 5s
+
+http:
+  enabled: true
+  port: 8443
+  tls:
+    enabled: false
+    cert:
+    key:
+
+metrics:
+  enabled: true
+  port: 9090
+  tls:
+    enabled: false
+    cert:
+    key:
+
+  # disable-v1-schema-api
+  # ns-cache-expiration
+  # schema-prefixes-required
+
+statefulset:
+  replicas: 3
+
+image:
+  repository: quay.io/authzed/spicedb
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
