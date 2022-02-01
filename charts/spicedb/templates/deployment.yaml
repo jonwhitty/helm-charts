@@ -1,11 +1,10 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: {{ include "spicedb.fullname" . }}
   labels:
     {{- include "spicedb.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ include "spicedb.fullname" . }}
   replicas: {{ .Values.statefulset.replicas | int64 }}
   selector:
     matchLabels:
