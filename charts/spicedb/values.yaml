@@ -53,8 +53,7 @@ metrics:
   # ns-cache-expiration
   # schema-prefixes-required
 
-statefulset:
-  replicas: 3
+replicas: 3
 
 image:
   repository: quay.io/authzed/spicedb

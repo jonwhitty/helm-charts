@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "spicedb.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.statefulset.replicas | int64 }}
+  replicas: {{ .Values.replicas | int64 }}
   selector:
     matchLabels:
       {{- include "spicedb.selectorLabels" . | nindent 6 }}
