@@ -1,5 +1,5 @@
 # helm-charts
-A repository of Helm charts for different Kubernetes deployments.
+A repository containing Helm charts for different Kubernetes deployments.
 
 ## Charts
 * [authzed/spicedb](./charts/spicedb/README.md)
