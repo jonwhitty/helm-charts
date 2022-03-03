@@ -1,0 +1,15 @@
+{{- if and .Values.serviceAccount.create .Values.serviceAccount.createAndBindRole -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "spicedb.fullname" . }}-watchEndpoints
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - endpoints
+  verbs:
+  - get
+  - list
+  - watch
+{{- end }}

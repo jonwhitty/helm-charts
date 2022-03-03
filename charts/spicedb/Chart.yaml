@@ -2,5 +2,5 @@ apiVersion: v2
 name: spicedb
 description: A Helm chart to manage a Kubernetes based deployment of Authzed spicedb. For more information see https://github.com/authzed/spicedb.
 type: application
-version: 0.0.1
+version: 0.0.2
 appVersion: "v1.4.0"
